@@ -4,7 +4,7 @@ import by.vlad.tasktracker.UserService.dto.UserDto;
 import by.vlad.tasktracker.UserService.dto.mapper.UserMapper;
 import by.vlad.tasktracker.UserService.model.User;
 import by.vlad.tasktracker.UserService.service.UserService;
-import org.apache.el.stream.Stream;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,12 +29,12 @@ public class UserController {
      * TODO:
      * + GET /users - получить список всех пользователей
      * + GET /users/{id} - получить информацию о пользователе
-     * PUT /users/{id} - обновить информацию о пользователе
-     * DELETE /users/{id} - удалить пользователя
+     * + PUT /users/{id} - обновить информацию о пользователе
+     * + DELETE /users/{id} - удалить пользователя
      */
 
     @PostMapping("/users")
-    public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto) {
+    public ResponseEntity<UserDto> createUser(@RequestBody @Valid UserDto userDto) {
         User createdUser = userService.createUser(userMapper.convertToEntity(userDto));
         UserDto response = userMapper.convertToDto(createdUser);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -54,4 +54,16 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    @PutMapping("/users/{id}")
+    public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @RequestBody @Valid UserDto userDto) {
+        User updateUser = userService.updateUser(userMapper.convertToEntity(userDto), id);
+        UserDto response = userMapper.convertToDto(updateUser);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @DeleteMapping("/users/{id}")
+    public ResponseEntity<HttpStatus> deleteUser(@PathVariable Long id) {
+        userService.deleteUser(id);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
 }

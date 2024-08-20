@@ -11,8 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserDto {
 
-    private Long id;
-
     @NotNull
     private String name;
 

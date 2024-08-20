@@ -29,4 +29,17 @@ public class UserService {
     public User getUserById(Long id) {
         return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
     }
+
+    public User updateUser(User user, Long id) {
+        User updateUser = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+        updateUser.setName(user.getName());
+        updateUser.setEmail(user.getEmail());
+        userRepository.save(updateUser);
+        return updateUser;
+    }
+
+    public void deleteUser(Long id) {
+        User deleteUser = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+        userRepository.delete(deleteUser);
+    }
 }
