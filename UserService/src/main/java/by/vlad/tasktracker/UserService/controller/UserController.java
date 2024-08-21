@@ -25,16 +25,8 @@ public class UserController {
         this.userMapper = userMapper;
     }
 
-    /**
-     * TODO:
-     * + GET /users - получить список всех пользователей
-     * + GET /users/{id} - получить информацию о пользователе
-     * + PUT /users/{id} - обновить информацию о пользователе
-     * + DELETE /users/{id} - удалить пользователя
-     */
-
     @PostMapping("/users")
-    public ResponseEntity<UserDto> createUser(@RequestBody @Valid UserDto userDto) {
+    public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserDto userDto) {
         User createdUser = userService.createUser(userMapper.convertToEntity(userDto));
         UserDto response = userMapper.convertToDto(createdUser);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -55,7 +47,7 @@ public class UserController {
     }
 
     @PutMapping("/users/{id}")
-    public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @RequestBody @Valid UserDto userDto) {
+    public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @Valid @RequestBody UserDto userDto) {
         User updateUser = userService.updateUser(userMapper.convertToEntity(userDto), id);
         UserDto response = userMapper.convertToDto(updateUser);
         return ResponseEntity.status(HttpStatus.OK).body(response);

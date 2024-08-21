@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserDto {
 
-    @NotNull
+    @NotNull(message = "Name must not be empty")
     private String name;
 
     @Email

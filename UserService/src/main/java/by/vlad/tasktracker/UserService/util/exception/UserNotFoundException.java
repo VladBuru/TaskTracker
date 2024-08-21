@@ -7,11 +7,11 @@ import lombok.Setter;
 @Setter
 public class UserNotFoundException extends RuntimeException {
 
-    private Long userId;
+    //private Long userId;
 
     public UserNotFoundException(Long id) {
         super("User not found with id: " + id);
-        this.userId = id;
+        //this.userId = id;
     }
 
 }
