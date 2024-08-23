@@ -87,4 +87,36 @@ public class UserServiceTest {
 
         assertThrows(UserNotFoundException.class, () -> userService.getUserById(1L));
     }
+
+    @Test
+    public void testUpdateUser() {
+        User updateUser = new User(1L, "user", "user@test.com");
+        User updatedUser = new User(1L, "user2", "user2@test.com");
+        when(userRepository.findById(1L)).thenReturn(Optional.of(updateUser));
+
+        User returnedUser = userService.updateUser(updatedUser, 1L);
+
+        assertEquals(returnedUser.getId(), updateUser.getId());
+        verify(userRepository, times(1)).save(updatedUser);
+    }
+
+    @Test
+    public void testUpdateUserThrowsExceptionUserNotFoundException() {
+        Long notExistentId = 1L;
+        User notExistentUser = mock(User.class);
+        when(userRepository.findById(notExistentId)).thenReturn(Optional.empty());
+
+        assertThrows(UserNotFoundException.class, () -> userService.updateUser(notExistentUser, 1L));
+    }
+
+    @Test
+    public void testUpdateUserThrowsExceptionEmailAlreadyExistsException() {
+        String existingEmail = "test@test.com";
+        User beforeUpdateUser = new User(1L, "user1", "user1@test.com");
+        User afterUpdatedUser = new User(1L, "user2", "test@test.com");
+        when(userRepository.findById(1L)).thenReturn(Optional.of(beforeUpdateUser));
+        when(userRepository.existsByEmail(existingEmail)).thenReturn(true);
+
+        assertThrows(EmailAlreadyExistsException.class, () -> userService.updateUser(afterUpdatedUser, 1L));
+    }
 }
