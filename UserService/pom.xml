@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>by.vlad.tasktracker</groupId>
-	<artifactId>UserService</artifactId>
+	<artifactId>user-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>UserService</name>
 	<description>User service for Task Tracker</description>
