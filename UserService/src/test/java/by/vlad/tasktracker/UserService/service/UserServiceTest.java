@@ -106,17 +106,38 @@ public class UserServiceTest {
         User notExistentUser = mock(User.class);
         when(userRepository.findById(notExistentId)).thenReturn(Optional.empty());
 
-        assertThrows(UserNotFoundException.class, () -> userService.updateUser(notExistentUser, 1L));
+        assertThrows(UserNotFoundException.class, () -> userService.updateUser(notExistentUser, notExistentId));
     }
 
     @Test
     public void testUpdateUserThrowsExceptionEmailAlreadyExistsException() {
         String existingEmail = "test@test.com";
         User beforeUpdateUser = new User(1L, "user1", "user1@test.com");
-        User afterUpdatedUser = new User(1L, "user2", "test@test.com");
+        User afterUpdatedUser = new User(1L, "user2", existingEmail);
         when(userRepository.findById(1L)).thenReturn(Optional.of(beforeUpdateUser));
         when(userRepository.existsByEmail(existingEmail)).thenReturn(true);
 
         assertThrows(EmailAlreadyExistsException.class, () -> userService.updateUser(afterUpdatedUser, 1L));
+        verify(userRepository, never()).save(afterUpdatedUser);
+    }
+
+    @Test
+    public void testDeleteUser() {
+        User deleteUser = new User(1L, "test", "test@test.com");
+        when(userRepository.findById(1L)).thenReturn(Optional.of(deleteUser));
+
+        userService.deleteUser(1L);
+
+        verify(userRepository, times(1)).delete(deleteUser);
+    }
+
+    @Test
+    public void testDeleteUserThrowsExceptionUserNotFoundException() {
+        Long notExistentId = 1L;
+        User user = new User(1L, "test", "test@test.com");
+        when(userRepository.findById(notExistentId)).thenReturn(Optional.empty());
+
+        assertThrows(UserNotFoundException.class, () -> userService.deleteUser(1L));
+        verify(userRepository, never()).delete(user);
     }
 }
