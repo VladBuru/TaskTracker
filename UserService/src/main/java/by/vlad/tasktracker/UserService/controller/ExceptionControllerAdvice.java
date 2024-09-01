@@ -24,7 +24,6 @@ public class ExceptionControllerAdvice {
                 ErrorType.RESOURCE_NOT_FOUND.getMessage(),
                 request.getRequestURI()
         );
-
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
@@ -44,13 +43,11 @@ public class ExceptionControllerAdvice {
         for (FieldError error : ex.getBindingResult().getFieldErrors()) {
             message.append(error.getField()).append(": ").append(error.getDefaultMessage()).append("; ");
         }
-
         ErrorResponse response = new ErrorResponse(HttpStatus.BAD_REQUEST.value(),
                 message.toString(),
                 ErrorType.VALIDATION_ERROR.getMessage(),
                 request.getRequestURI()
         );
-
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 }

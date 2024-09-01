@@ -1,10 +1,12 @@
 package by.vlad.tasktracker.UserService.service;
 
+import by.vlad.tasktracker.UserService.event.UserDeletedEvent;
 import by.vlad.tasktracker.UserService.model.User;
 import by.vlad.tasktracker.UserService.repository.UserRepository;
 import by.vlad.tasktracker.UserService.util.exception.EmailAlreadyExistsException;
 import by.vlad.tasktracker.UserService.util.exception.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,10 +17,12 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final KafkaTemplate<Long, UserDeletedEvent> kafkaTemplate;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, KafkaTemplate<Long, UserDeletedEvent> kafkaTemplate) {
         this.userRepository = userRepository;
+        this.kafkaTemplate = kafkaTemplate;
     }
 
     @Transactional
@@ -53,5 +57,8 @@ public class UserService {
     public void deleteUser(Long id) {
         User deleteUser = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
         userRepository.delete(deleteUser);
+
+        UserDeletedEvent event = new UserDeletedEvent(id); // генерируем событие
+        kafkaTemplate.send("user-deleted-topic", event); // отправка события в топик
     }
 }
